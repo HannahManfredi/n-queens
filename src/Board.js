@@ -102,11 +102,7 @@
         }
       }
       return flag;
-      // return false;
-      //how do we invoke this function ^
     },
-
-
 
     // COLUMNS - run from top to bottom
     // --------------------------------------------------------------
@@ -125,7 +121,6 @@
       } else {
         return false;
       }
-
     },
 
     // test if any columns on this board contain conflicts
