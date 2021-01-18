@@ -62,7 +62,7 @@
     },
 
 
-/*
+    /*
          _             _     _
      ___| |_ __ _ _ __| |_  | |__   ___ _ __ ___ _
     / __| __/ _` | '__| __| | '_ \ / _ \ '__/ _ (_)
@@ -79,12 +79,31 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var row = this.get(rowIndex);
+      if (Array.isArray(row)) {
+        var sum = row.reduce(function(acc, cur) {
+          return acc += cur;
+        });
+      }
+      if (sum > 1) {
+        return true;
+      } else {
+        return false;
+      }
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      var flag = false;
+      for (key in this.attributes) {
+        flag = this.hasRowConflictAt(key);
+        if (flag) {
+          return flag;
+        }
+      }
+      return flag;
+      // return false;
+      //how do we invoke this function ^
     },
 
 
@@ -94,12 +113,31 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      var sum = 0;
+      for (key in this.attributes) {
+        var row = this.get(key);
+        if (Array.isArray(row)) {
+          sum += row[colIndex];
+        }
+      }
+      if (sum > 1) {
+        return true;
+      } else {
+        return false;
+      }
+
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+      var flag = false;
+      for (let i = 0; i < this.attributes.n; i++) {
+        flag = this.hasColConflictAt(i);
+        if (flag) {
+          return flag;
+        }
+      }
+      return flag;
     },
 
 
