@@ -142,14 +142,32 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      //can start at any index in row 1 || col 1
+      //check down 1 and over to the right 1
+      var sum = 0;
+      var colIndex = majorDiagonalColumnIndexAtFirstRow;
+      for (key in this.attributes) { //how we access in column in row 1?
+        var row = this.get(key);
+        if (Array.isArray(row)) {
+          sum += row[colIndex];
+          colIndex += 1;
+          if (colIndex > this.attributes.n) {
+            break;
+          }
+        }
+      }
+      if (sum > 1) {
+        return true;
+      } else {
+        return false;
+      }
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
-    },
+      //start at 0,0
 
+    },
 
 
     // Minor Diagonals - go from top-right to bottom-left
