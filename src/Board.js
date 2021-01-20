@@ -106,7 +106,6 @@
 
     // COLUMNS - run from top to bottom
     // --------------------------------------------------------------
-    //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
       var sum = 0;
@@ -139,23 +138,26 @@
 
     // Major Diagonals - go from top-left to bottom-right
     // --------------------------------------------------------------
-    //
-    // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      //can start at any index in row 1 || col 1
-      //check down 1 and over to the right 1
       var sum = 0;
-      var colIndex = majorDiagonalColumnIndexAtFirstRow;
-      for (key in this.attributes) { //how we access in column in row 1?
-        var row = this.get(key);
-        if (Array.isArray(row)) {
-          sum += row[colIndex];
-          colIndex += 1;
-          if (colIndex > this.attributes.n) {
-            break;
-          }
-        }
+      var colIndex = 0;
+      var startRow = 0;
+      if (majorDiagonalColumnIndexAtFirstRow >= 0) {
+        startRow = 0;
+        colIndex = majorDiagonalColumnIndexAtFirstRow;
+      } else {
+        startRow = Math.abs(majorDiagonalColumnIndexAtFirstRow);
+        colIndex = 0;
       }
+      for (var i = startRow; i <= this.attributes.n - 1; i++) {
+        var row = this.get(i);
+        if (row[colIndex] === undefined) {
+          break;
+        }
+        sum += row[colIndex];
+        colIndex += 1;
+      }
+      console.log('sum2', sum);
       if (sum > 1) {
         return true;
       } else {
@@ -166,7 +168,20 @@
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
       //start at 0,0
-
+      var flag = false;
+      for (let i = 0; i < this.attributes.n - 1; i++) {
+        flag = this.hasMajorDiagonalConflictAt(i);
+        if (flag) {
+          return flag;
+        }
+      }
+      for (let i = - 1; i > (this.attributes.n - 1) * -1; i--) {
+        flag = this.hasMajorDiagonalConflictAt(i);
+        if (flag) {
+          return flag;
+        }
+      }
+      return flag;
     },
 
 
