@@ -157,7 +157,6 @@
         sum += row[colIndex];
         colIndex += 1;
       }
-      console.log('sum2', sum);
       if (sum > 1) {
         return true;
       } else {
