@@ -223,12 +223,6 @@
           return flag;
         }
       }
-      // for (let i = - 1; i > (this.attributes.n - 1) * -1; i--) {
-      //   flag = this.hasMinorDiagonalConflictAt(i);
-      //   if (flag) {
-      //     return flag;
-      //   }
-      // }
       return flag;
     }
 
