@@ -46,75 +46,46 @@ window.findNRooksSolution = function(n) { //add an argument for which version of
       solution.push(newBoard.get(i));
     }
   }
-  console.log('solution: ', solution);
+
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  console.log('-----', n, '---------');
   var solutionCount = 0; //fixme
-  var solutionBoards = [];
   var newBoard = new Board({n: n});
+
   var setPiece = function(row, col, val) {
-    console.log('r: ', row, 'c: ', col, 'v: ', val);
     let tempRow = newBoard.get(row);
+    filledCols[col] = val;
     tempRow[col] = val;
-    console.log('tempRow: ', tempRow);
     newBoard.set(row, tempRow);
-    console.log('newBoard', newBoard);
   };
 
-  var solutionIncluded = function() {
-    //console.log(solutionIncuded);
-    var board = [];
-    for (var i = 0; i < newBoard.attributes.n; i++) {
-      board.push(newBoard.get(i));
-    }
-    board = JSON.stringify(board);
-    if (!solutionBoards.includes(board)) {
-      solutionBoards.push(board);
-      return false;
-    } else {
-      return true;
-    }
-  };
+  var filledCols = {};
+  for (var i = 0; i < n; i++) {
+    filledCols[i] = 0;
+  }
 
-  var solutionBoards = [];
-  // return an inner function traverse
   var traverse = function(r) {
-    console.log('r', r);
-    for (let i = 0; i < n; i++) { //loop over row
-      setPiece(r, i, 1); //place a piece
-      if (newBoard.hasRowConflictAt(r) || newBoard.hasColConflictAt(i)) { //if conflicts
-      } else {
-        if (n === r + 1) { //are we currently on last row
+    for (let i = 0; i < n; i++) {
+      if (!filledCols[i]) {
+        setPiece(r, i, 1);
+        if (n === r + 1) {
           solutionCount += 1;
           setPiece(r, i, 0);
           return;
         } else {
           traverse(r + 1);
         }
+        setPiece(r, i, 0);
       }
-      setPiece(r, i, 0); //remove a piece
     }
     return;
   };
   traverse(0);
-  //console.log('solutionBoards'. solutionBoards);
-  //solutionCount = solutionBoards.length;
 
-  //check for row and col conflicts
-  // if row = n - 1 return 1
-  //call traverse with row + 1
-  // remove piece
-
-  //invoke with row 1
-  //[1, 0, 0] row = 0
-  //[0, 1, 0] row = 1
-  //[0, 0, 1]
-  //console.log('solutionBoards', solutionBoards);
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
