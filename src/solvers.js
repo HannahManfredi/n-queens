@@ -81,32 +81,29 @@ window.countNRooksSolutions = function(n) {
     }
   };
 
-  // var solutionBoards = [];
-  //return an inner function traverse
+  var solutionBoards = [];
+  // return an inner function traverse
   var traverse = function(r) {
     console.log('r', r);
     for (let i = 0; i < n; i++) { //loop over row
-      console.log('1');
       setPiece(r, i, 1); //place a piece
-      if (!newBoard.hasRowConflictAt(r) || !newBoard.hasColConflictAt(i)) { //if no conflicts
+      if (newBoard.hasRowConflictAt(r) || newBoard.hasColConflictAt(i)) { //if conflicts
+      } else {
         if (n === r + 1) { //are we currently on last row
-          if (!solutionIncluded()) {
-            solutionCount += 1;
-            console.log('solutionCount', solutionCount);
-            console.log('2');
-            setPiece(r, i, 0);
-            return;
-          }
+          solutionCount += 1;
+          setPiece(r, i, 0);
+          return;
         } else {
           traverse(r + 1);
         }
       }
-      console.log('3');
       setPiece(r, i, 0); //remove a piece
     }
     return;
   };
   traverse(0);
+  //console.log('solutionBoards'. solutionBoards);
+  //solutionCount = solutionBoards.length;
 
   //check for row and col conflicts
   // if row = n - 1 return 1
