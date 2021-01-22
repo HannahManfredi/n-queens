@@ -15,26 +15,21 @@
 
 //keep in mind...how to allow for future expansion?
 
-window.findNRooksSolution = function(...args) {
-  var newBoard = new Board({n: args[0]});
+window.findNRooksSolution = function(n) { //add an argument for which version of loop we want to use
+  var newBoard = new Board({n: n});
   var counter = 0;
+
   var setPiece = function(row, col, val) {
     let tempRow = newBoard.get(row);
     tempRow[col] = val;
     newBoard.set(row, tempRow);
   };
-  if (args.length === 1) {
-    setPiece( 0, 0, 1);
-  } else {
-    setPiece(args[1], args[2], 1);
-  }
-  counter ++;
+  setPiece( 0, 0, 1);
+  counter++;
+
   for (var i = 0; i <= newBoard.attributes.n - 1; i++) {
     for (var j = 0; j <= newBoard.attributes.n - 1; j++) {
-      //console.log("row: ", i, ' || col: ', j);
-      //outside if statement checking if piece exists
       if (!newBoard.get(i)[j]) {
-        //add piece
         setPiece(i, j, 1);
         if (newBoard.hasRowConflictAt(i) || newBoard.hasColConflictAt(j)) {
           setPiece(i, j, 0);
@@ -44,72 +39,85 @@ window.findNRooksSolution = function(...args) {
       }
     }
   }
-  console.log('--------');
-  // console.log('n:', args[0]);
 
-  // console.log(newBoard);
   var solution = [];
-  if (counter === args[0]) {
+  if (counter === n) {
     for (var i = 0; i < newBoard.attributes.n; i++) {
       solution.push(newBoard.get(i));
     }
   }
   console.log('solution: ', solution);
-  console.log('Single solution for ' + args[0] + ' rooks:', JSON.stringify(solution));
+  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
+  console.log('-----', n, '---------');
   var solutionCount = 0; //fixme
   var solutionBoards = [];
+  var newBoard = new Board({n: n});
+  var setPiece = function(row, col, val) {
+    console.log('r: ', row, 'c: ', col, 'v: ', val);
+    let tempRow = newBoard.get(row);
+    tempRow[col] = val;
+    console.log('tempRow: ', tempRow);
+    newBoard.set(row, tempRow);
+    console.log('newBoard', newBoard);
+  };
 
-  var solutionIncluded = function(board) {
+  var solutionIncluded = function() {
+    //console.log(solutionIncuded);
+    var board = [];
+    for (var i = 0; i < newBoard.attributes.n; i++) {
+      board.push(newBoard.get(i));
+    }
     board = JSON.stringify(board);
     if (!solutionBoards.includes(board)) {
       solutionBoards.push(board);
-      solutionCount++;
+      return false;
+    } else {
+      return true;
     }
   };
 
-  var hotdogFlip = function(k) {
-    var flippedBoard = [];
-    for (var i = k.length - 1; i >= 0; i--) {
-      flippedBoard.push(k[i]);
-    }
-    console.log('hotdogflip', flippedBoard);
-    return flippedBoard;
-  };
-
-  var hamburgerFlip = function(k) {
-    var flippedBoard = [];
-    //[[], [], [], []]
-    for (var m = 0; m < k.length; m++ ) {
-      flippedBoard.push([]);
-    }
-
-    for (var i = k.length - 1; i >= 0; i--) {
-      for (var j = 0; j < k.length; j++ ) {
-        flippedBoard[j].push(k[j][i]);
+  // var solutionBoards = [];
+  //return an inner function traverse
+  var traverse = function(r) {
+    console.log('r', r);
+    for (let i = 0; i < n; i++) { //loop over row
+      console.log('1');
+      setPiece(r, i, 1); //place a piece
+      if (!newBoard.hasRowConflictAt(r) || !newBoard.hasColConflictAt(i)) { //if no conflicts
+        if (n === r + 1) { //are we currently on last row
+          if (!solutionIncluded()) {
+            solutionCount += 1;
+            console.log('solutionCount', solutionCount);
+            console.log('2');
+            setPiece(r, i, 0);
+            return;
+          }
+        } else {
+          traverse(r + 1);
+        }
       }
+      console.log('3');
+      setPiece(r, i, 0); //remove a piece
     }
-
-    console.log('hamburgerflip', flippedBoard);
-    return flippedBoard;
+    return;
   };
+  traverse(0);
 
-  for (var i = 0; i <= n - 1; i++) {
-    for (var j = 0; j <= n - 1; j++) {
-      var k = this.findNRooksSolution(n, i, j);
-      if (k.length > 0) {
-        solutionIncluded(k);
-        solutionIncluded(hotdogFlip(k));
-        solutionIncluded(hamburgerFlip(k));
-      }
-    }
-  }
+  //check for row and col conflicts
+  // if row = n - 1 return 1
+  //call traverse with row + 1
+  // remove piece
 
-  console.log(solutionBoards);
+  //invoke with row 1
+  //[1, 0, 0] row = 0
+  //[0, 1, 0] row = 1
+  //[0, 0, 1]
+  //console.log('solutionBoards', solutionBoards);
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
